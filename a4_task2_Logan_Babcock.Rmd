@@ -5,26 +5,25 @@ date: "November 4, 2021"
 output: html_document
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+```{r setup, include=FALSE, messages = FALSE, warning = FALSE}
+knitr::opts_chunk$set(echo = FALSE,  messages = FALSE, warning = FALSE)
+
+library(tidyverse)
+library(here)
+library(janitor)
+library(kableExtra)
+
+hares_raw <- read.csv(here("data", "bonanza_hares.csv"))
+
 ```
 
-## R Markdown
+## 1. Overview
+This is an exploratory report on juvenile snoeshoe hares (*Lepus americanus*) using data collected during the  US Long Term Ecological Research Network's study on Snowshoe hare physical data in the Bonanza Creek Experimental Forest. Using the data collected from 1999-2012, this report will analyze the counts and sizes of juvenile hares.
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+*COME BACK TO FINISH THIS  - add info on what the report contains*
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+## 2. Data and Methods
+Snowshoe hare data and measurements were made accessible through Knut Kielland and associates at the Bonanza Creek LTER. The data contain measurements and observations on hares during a capture-recapture study done in Alaska's Tanana valley from 1999-2012. 
 
-```{r cars}
-summary(cars)
-```
+*COME BACK TO FINISH THIS - add info on stats tests and whats included* 
 
-## Including Plots
-
-You can also embed plots, for example:
-
-```{r pressure, echo=FALSE}
-plot(pressure)
-```
-
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
