@@ -12,6 +12,8 @@ library(tidyverse)
 library(here)
 library(janitor)
 library(kableExtra)
+library(lubridate)
+
 
 hares_raw <- read.csv(here("data", "bonanza_hares.csv"))
 
@@ -26,4 +28,15 @@ This is an exploratory report on juvenile snoeshoe hares (*Lepus americanus*) us
 Snowshoe hare data and measurements were made accessible through Knut Kielland and associates at the Bonanza Creek LTER. The data contain measurements and observations on hares during a capture-recapture study done in Alaska's Tanana valley from 1999-2012. 
 
 *COME BACK TO FINISH THIS - add info on stats tests and whats included* 
+
+## Data Visualization and Analysis
+```{r}
+# finding juvenile hare counts
+
+# making separate year column
+hares_year <- hares_raw %>% # making new dataset with new date column
+  mutate(date_new = mdy(date)) %>% # new column with date class
+  mutate(year = year(date_new)) # new column with just year
+
+```
 
