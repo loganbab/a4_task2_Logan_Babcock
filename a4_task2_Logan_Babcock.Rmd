@@ -31,6 +31,7 @@ Snowshoe hare data and measurements were made accessible through Knut Kielland a
 
 ## Data Visualization and Analysis
 ```{r}
+
 # finding juvenile hare counts
 
 # making separate year column
@@ -38,5 +39,19 @@ hares_year <- hares_raw %>% # making new dataset with new date column
   mutate(date_new = mdy(date)) %>% # new column with date class
   mutate(year = year(date_new)) # new column with just year
 
-```
+yearly_count <- hares_year %>% # making a dataset wiht just year and count
+  group_by(year) %>% # grouping by year
+  count() %>%  #adding all observations for that year
+  rename(Year = year, Count = n)
 
+kable(yearly_count, caption = "Table 1: Number of juvenlie snowshoe hares caught per year" , align = "l") %>% # making a finalized table with title
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = F, position = "left", wraptable_width = 0) # customizing table
+
+# visualizing the data
+
+ggplot(data = yearly_count, aes(x = Year, y = Count)) +
+  geom_col(color = "coral2", fill = "coral2") +
+  scale_x_continuous(limits=c(1997,2013), breaks = c(1998, 2000, 2002, 2004, 2006, 2008, 2010, 2012)) +
+  labs(caption = "Figure 1: Number of juvenile hares caught during sampling from 1998-2012, shown through bar chart with height representing number of individual hares.", title = "Hares caught each year (Babcock)")
+```
+Above, Figure 1 shows the number of hares caught each year of the survey period. The number of hares caught vaired between 38 and 410. 
