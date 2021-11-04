@@ -49,9 +49,16 @@ kable(yearly_count, caption = "Table 1: Number of juvenlie snowshoe hares caught
 
 # visualizing the data
 
-ggplot(data = yearly_count, aes(x = Year, y = Count)) +
-  geom_col(color = "coral2", fill = "coral2") +
-  scale_x_continuous(limits=c(1997,2013), breaks = c(1998, 2000, 2002, 2004, 2006, 2008, 2010, 2012)) +
-  labs(caption = "Figure 1: Number of juvenile hares caught during sampling from 1998-2012, shown through bar chart with height representing number of individual hares.", title = "Hares caught each year (Babcock)")
+ggplot(data = yearly_count, aes(x = Year, y = Count)) + # makign a column chart to display counts
+  geom_col(color = "coral2", fill = "coral2") + # adding some color to the graph
+  scale_x_continuous(limits=c(1997,2013), breaks = c(1998, 2000, 2002, 2004, 2006, 2008, 2010, 2012)) + #setting the x ais labels
+  labs(caption = "Figure 1: Number of juvenile hares caught during sampling from 1998-2012, shown through bar chart with height representing number of individual hares.", title = "Hares caught each year (Babcock)") # adding a title and figure caption
+
+# getting summary stats
+
+invisible(summary(yearly_count))
+
 ```
-Above, Figure 1 shows the number of hares caught each year of the survey period. The number of hares caught vaired between 38 and 410. 
+
+
+Above, Figure 1 shows the number of hares caught each year of the survey period. The number of hares caught vaired between 38 and 410. The mean number of hares caught is 213, and the median is 179. The graph shows that the number of hares caught decreased in the years 2001 through 2005, but then the count rose to around the max value, and stayed there until the final count in 2012 where the number of hares decreased back to 2005 levels. Ensuring that both the number of traps, and days of of the year the traps are set are equal and consistent accross the survey's years can help reduce variance due to the studies methods. 
