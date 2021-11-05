@@ -6,7 +6,7 @@ output: html_document
 ---
 
 ```{r setup, include=FALSE, messages = FALSE, warning = FALSE}
-knitr::opts_chunk$set(echo = FALSE,  messages = FALSE, warning = FALSE)
+knitr::opts_chunk$set(echo = FALSE,  messages = FALSE, warning = FALSE, fig.align = "center")
 
 library(tidyverse)
 library(here)
@@ -30,6 +30,9 @@ Snowshoe hare data and measurements were made accessible through Knut Kielland a
 *COME BACK TO FINISH THIS - add info on stats tests and whats included* 
 
 ## Data Visualization and Analysis
+
+### Juvenile Hare Survey Counts
+
 ```{r}
 
 # finding juvenile hare counts
@@ -44,6 +47,7 @@ yearly_count <- hares_year %>% # making a dataset wiht just year and count
   count() %>%  #adding all observations for that year
   rename(Year = year, Count = n)
 
+
 kable(yearly_count, caption = "Table 1: Number of juvenlie snowshoe hares caught per year" , align = "l") %>% # making a finalized table with title
   kable_styling(bootstrap_options = c("striped", "hover"), full_width = F, position = "left", wraptable_width = 0) # customizing table
 
@@ -57,8 +61,40 @@ ggplot(data = yearly_count, aes(x = Year, y = Count)) + # makign a column chart 
 # getting summary stats
 
 invisible(summary(yearly_count))
+```
+
+Above, Figure 1 shows the number of hares caught each year of the survey period. The number of hares caught vaired between 38 and 410. The mean number of hares caught is 213, and the median is 179. The graph shows that the number of hares caught decreased in the years 2001 through 2005, but then the count rose to around the max value, and stayed there until the final count in 2012 where the number of hares decreased back to 2005 levels. Ensuring that both the number of traps, and days of of the year the traps are set are equal and consistent accross the survey's years can help reduce variance resulting from the studies methods. 
+
+### Juvenile Hare Weights
+
+```{r}
+# making a datasets with relevant data
+
+hare_weights <- hares_raw %>% # make a new data set with variables site sex and weight
+  select(grid, sex, weight) %>% 
+  rename("site" = grid) %>%  # rename site column 
+  na.omit(hare_weights) # exclude values with NA
+
+f_weight <- hare_weights %>% #making a vector of values for just female hare weights
+  filter(sex == "f") %>% # selecting female values
+  pull(weight) # pulling the data for weights
+
+m_weight <- hare_weights %>% #making vectore of just male weights
+  filter(sex =="m") %>% # selecting male values
+  pull(weight) #pulling data for weights
+
+# looking at the data
+
+ggplot(data = hare_weights, aes(x = sex, y = weight)) + #exploratory scatter plot graph
+  geom_jitter(aes(color = sex)) +
+  facet_wrap(~ site) + # adding site as a face wrap for comparison
+  labs(x = "Sex", y = "Weight (g)", title = "Plot of juvenile hare weight by sex faceted by site (Babcock)", caption = "Figure 2: This plot shows the distribution of hare weights for each sex, faceted by survey site, where *f* is female and *m* is male.")
+
+ggplot(data = hare_weights, aes(x = weight)) + # exploratory histogram of weights
+  geom_histogram(bins = 18, color = "coral2", fill = "coral2") + # setting bins at smaller value than default 30
+  facet_wrap(~sex) + # separating based on sex to compare the two
+  labs(x = "Weight (g)", y = "Percent of sample", title = "Histogram of juvenile hare weights by sex (Babcock)", caption = "Figure 3: This histogram shows the distribution of hare weights by percent of population, and is faceted by sex, where *f* is female and *m* is male.") + # adding labels
+  theme_light()
 
 ```
 
-
-Above, Figure 1 shows the number of hares caught each year of the survey period. The number of hares caught vaired between 38 and 410. The mean number of hares caught is 213, and the median is 179. The graph shows that the number of hares caught decreased in the years 2001 through 2005, but then the count rose to around the max value, and stayed there until the final count in 2012 where the number of hares decreased back to 2005 levels. Ensuring that both the number of traps, and days of of the year the traps are set are equal and consistent accross the survey's years can help reduce variance due to the studies methods. 
