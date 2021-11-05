@@ -33,7 +33,7 @@ Snowshoe hare data and measurements were made accessible through Knut Kielland a
 
 ### Juvenile Hare Survey Counts
 
-```{r}
+```{r, layout="l-body-outset", fig.width = 10}
 
 # finding juvenile hare counts
 
@@ -47,9 +47,11 @@ yearly_count <- hares_year %>% # making a dataset wiht just year and count
   count() %>%  #adding all observations for that year
   rename(Year = year, Count = n)
 
+yearly_count_wide <- pivot_wider(yearly_count, names_from = Year, values_from = Count)
 
-kable(yearly_count, caption = "Table 1: Number of juvenlie snowshoe hares caught per year" , align = "l") %>% # making a finalized table with title
-  kable_styling(bootstrap_options = c("striped", "hover"), full_width = F, position = "left", wraptable_width = 0) # customizing table
+
+kable(yearly_count_wide, caption = "Table 1: Number of juvenlie snowshoe hares caught per year" , align = "c") %>% # making a finalized table with title
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = F) # customizing table
 
 # visualizing the data
 
@@ -67,7 +69,7 @@ Above, Figure 1 shows the number of hares caught each year of the survey period.
 
 ### Juvenile Hare Weights
 
-```{r}
+```{r, layout="l-body-outset", fig.width = 10}
 # making a datasets with relevant data
 
 hare_weights <- hares_raw %>% # make a new data set with variables site sex and weight
@@ -95,6 +97,12 @@ ggplot(data = hare_weights, aes(x = weight)) + # exploratory histogram of weight
   facet_wrap(~sex) + # separating based on sex to compare the two
   labs(x = "Weight (g)", y = "Percent of sample", title = "Histogram of juvenile hare weights by sex (Babcock)", caption = "Figure 3: This histogram shows the distribution of hare weights by percent of population, and is faceted by sex, where *f* is female and *m* is male.") + # adding labels
   theme_light()
+
+# analyzing the data 
+
+weights_t <- t.test(f_weight, m_weight) # t test comparing weights based on sex
+weights_t # view results of t test
+
 
 ```
 
