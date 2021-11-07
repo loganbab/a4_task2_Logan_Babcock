@@ -157,6 +157,40 @@ Mean weight for female juvenile hares (`r round(summary_weights$mean[1])` g) is 
 
 Getting a p-value of `r weights_t[["p.value"]]` means that there is a 0.7% chance of getting means that are at least as different as those seen here if they're drawn from populations with the same mean. This means that we would reject the null hypothesis that the population's mean weights are the same.
 
+### Juvenile Weight & Hind Foot Length
 
+```{r}
+# making data set with only weight and foot size included
 
+weight_foot <- hares_raw %>% 
+  filter(age == "j") %>% # getting juveniles
+  select(weight, hindft) # keeping only columns for weight and hind ft
 
+# visualizing the relationship
+
+ggplot(data = weight_foot, aes(x = hindft, y = weight)) + # making a graph with the variables
+  geom_point(color = "coral2") +
+  labs(x = "Hindfoot Length (mm)", y = "Weight (g)", title = "Juvenile Hare Hindfoot Lenth and Weight Relationship (Babcock)", caption = expression(paste(bold("Figure 4:"), "Hindfoot lenth (mm) and hare weight in grams are plotted to visualize their relationship")))
+  
+```
+
+```{r}
+# linear model, stored as lm_hare
+
+lm_hare <- lm(weight ~ hindft, data = weight_foot) # linear model with foot and weight measurements
+
+# tidying the summary output
+
+lm_hare_tidy <- broom::tidy(lm_hare) #using broom::tidy to make cleaner output table
+
+# getting coefficient 
+
+hare_coef <- lm_hare_tidy$estimate[2]
+
+# metrics at a glance
+
+lm_hare_glance <- broom::glance(lm_hare)
+
+```
+
+Simple linear regression was used to explore the relationship between juvenile snowshoe hare hindfoot lenth (mm) and body weight (g) across all three sampling sites, and including both male and female hares. A regression model was found ($\beta$ = `r round(hare_coef,3)`, F(`r lm_hare_glance$df`,`r lm_hare_glance$df.residual`) = `r round(lm_hare_glance$statistic,1)`, p < 0.001) with an R^2^ of `r round(lm_hare_glance$r.squared,3)`.
