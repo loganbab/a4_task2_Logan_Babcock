@@ -13,6 +13,7 @@ library(here)
 library(janitor)
 library(kableExtra)
 library(lubridate)
+library(effsize)
 
 
 hares_raw <- read.csv(here("data", "bonanza_hares.csv"))
@@ -96,23 +97,40 @@ ggplot(data = hare_weights, aes(x = sex, y = weight)) + #exploratory scatter plo
   facet_wrap(~ site) + # adding site as a face wrap for comparison
   labs(x = "Sex", y = "Weight (g)", title = "Plot of Juvenile Hare Wight by Sex and Site (Babcock)", caption = expression(paste(bold("Figure 2:"), "This plot shows the distribution of hare weights for each sex, faceted by survey site, where *f* is female and *m* is male.")))
 
-ggplot(data = hare_weights, aes(x = weight)) + # exploratory histogram of weights
-  geom_histogram(bins = 18, color = "white", fill = "coral2") + # setting bins at smaller value than default 30
-  facet_wrap(~sex) + # separating based on sex to compare the two
-  labs(x = "Weight (g)", y = "Percent of sample", title = "Histogram of juvenile hare weights by sex (Babcock)", caption = expression(paste(bold("Figure 3:"), "This histogram shows the distribution of hare weights by percent of population, and is faceted by sex, where *f* is female and *m* is male."))) + # adding labels
+
+ggplot(data = hare_weights, aes(x = weight, fill = sex)) + # exploratory histogram of weights with sex stacked
+  geom_histogram(bins = 18, color = "white") + # setting bins at smaller value than default 30
+  facet_wrap(~site) + # separating based on site to compare
+  labs(x = "Weight (g)", y = "Percent of sample", legend = "Sex", title = "Histogram of Juvenile Hare Weights by Site and Sex (Babcock)", caption = expression(paste(bold("Figure 3:"), "This histogram shows the distribution of hare weights by percent of population, and is faceted by site"))) + # adding labels
   theme_light()
-
-# analyzing the data w a ttest 
-
-invisible(weights_t <- t.test(f_weight, m_weight)) # t test comparing weights based on sex
-weights_t # view results of t test
 
 
 ```
 
-Figure 2 and Figure 3 above show the comparison between female and male juevenile showshoe hare weights first in a jitter plot and then in a side by sire histograms. In the jitter plot, the hares are separated by the site they were caught at, and it is clear that the least number of hares caught was at the Bonbs, and the most at the Bonrip site. At the Bonrip site, the female weights are more concentrated, and the male weights are more spread out. This is shown further in the histogram, where the percent female weights adhere to a more normal curve, and the male weights have a larger spread with less of a notable peak. The weights of the juvenile hares caught do not vary largely between the sexes, or between site location.  
+Figure 2 and Figure 3 above show the comparison between female and male juevenile showshoe hare weights first in a jitter plot and then in a side by sire histograms. In the jitter plot, the hares are separated by the site they were caught at, and it is clear that the least number of hares caught was at the Bonbs, and the most at the Bonrip site. At the Bonrip site, the female weights are more concentrated, and the male weights are more spread out. This is shown further in the histogram, where the percent female weights adhere to a more normal curve, and the male weights have a larger spread with less of a notable peak. The weights values do not vary largely between the sexes, or between site location.
 
 ### Juvenile hare weights comparison
+```{r, include = FALSE}
+# exploratory graphs
+
+ggplot(hare_weights, aes(sample = weight)) + # exploratory qq plot faceted by sex
+  geom_qq() +
+  facet_wrap(~sex)
+
+ggplot(hare_weights, aes(sample = weight)) + # exploratory qq plot with population considered together
+  geom_qq()
+
+# analyzing the data w a ttest 
+
+weights_t <- t.test(f_weight, m_weight) # t test comparing weights based on sex
+weights_t # view results of t test
+
+# getting effect size 
+
+weight_cohen <- cohen.d(f_weight, m_weight) # effect size
+weight_cohen # viewing results 
+
+```
 
 ```{r}
 # Making summary table of statistics
@@ -126,7 +144,6 @@ summary_weights <- hare_weights %>% # making summary chart
     sample_size = n()) %>% 
   rename("Sex" = sex,  # renaming columns 
          "Standard Deviation" = "sd",
-         "Mean Size (g)" = "mean",
          "Median Size (g)" = "median", 
          "Count" = "sample_size")
 
@@ -134,4 +151,10 @@ kable(summary_weights, caption = "Table 2: Summary Statistics for Female and Mal
   kable_styling(bootstrap_options = c("striped", "hover"), full_width = F)
 
 ```
+In this section we compared the weights of juvenile showshoe hares based on sex using a unpaire t-test, a Cohen's test to see the effect size, and with summary statistics.
+
+Mean weight for female juvenile hares (`r round(summary_weights$mean[1])` g) is less than that for male juvenile hares (`r round(summary_weights$mean[2])` g). The effect size is small, with a Cohen's D of (Cohen's *d* = `r weight_cohen$estimate`). The difference between the means is significant (two-sample t-test, t = `r round(weights_t$statistic[3])`, p < 0.01)
+
+
+
 
