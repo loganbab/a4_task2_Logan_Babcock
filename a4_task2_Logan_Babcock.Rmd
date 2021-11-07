@@ -68,7 +68,7 @@ ggplot(data = yearly_count, aes(x = Year, y = Count)) + # makign a column chart 
 
 ```
 
-Above, Figure 1 shows the number of hares caught each year of the survey period. The number of hares caught vaired between 0 and 126. The mean number of hares caught is 32, and the median is 19. The graph shows that the number of hares caught peaked at the beginning of the study in 1999. After this peak the number decreased until the first 0 catch year is recorded in 2002. The count then stayed below 50, with around every other year reaching 50, with low catch number in between. The second year of 0 caught occured in 2009, with the last three years of the survey seeing counts below 25. Ensuring that both the number of traps, and days of of the year the traps are set are equal and consistent accross the survey's years can help reduce variance resulting from the studies methods. 
+Above, Figure 1 shows the number of hares caught each year of the survey period. The number of hares caught vaired between 0 and 126. The minimum is `r min(yearly_count$Count)`, and the maximum is ` r max(yearly_count$Count)`. The mean number of hares caught is `r mean(yearly_count$Count)`, and the median is `r median(yearly_count$Count)`. The graph shows that the number of hares caught peaked at the beginning of the study in 1999. After this peak the number decreased until the first 0 catch year is recorded in 2002. The count then stayed below 50, with around every other year reaching 50, with low catch number in between. The second year of 0 caught occured in 2009, with the last three years of the survey seeing counts below 25. Ensuring that both the number of traps, and days of of the year the traps are set are equal and consistent accross the survey's years can help reduce variance resulting from the studies methods. 
 
 ### Juvenile Hare Weights
 
@@ -151,9 +151,11 @@ kable(summary_weights, caption = "Table 2: Summary Statistics for Female and Mal
   kable_styling(bootstrap_options = c("striped", "hover"), full_width = F)
 
 ```
-In this section we compared the weights of juvenile showshoe hares based on sex using a unpaire t-test, a Cohen's test to see the effect size, and with summary statistics.
+In this section we compared the weights of juvenile showshoe hares based on sex using a unpaired t-test, a Cohen's test to see the effect size, and using summary statistics.
 
 Mean weight for female juvenile hares (`r round(summary_weights$mean[1])` g) is less than that for male juvenile hares (`r round(summary_weights$mean[2])` g). The effect size is small, with a Cohen's D of (Cohen's *d* = `r weight_cohen$estimate`). The difference between the means is significant (two-sample t-test, t = `r round(weights_t$statistic[3])`, p < 0.01)
+
+Getting a p-value of `r weights_t[["p.value"]]` means that there is a 0.7% chance of getting means that are at least as different as those seen here if they're drawn from populations with the same mean. This means that we would reject the null hypothesis that the population's mean weights are the same.
 
 
 
