@@ -63,7 +63,8 @@ ggplot(data = yearly_count, aes(x = Year, y = Count)) + # makign a column chart 
 
 # getting summary stats
 
-summary(yearly_count)
+ invisible(summary(yearly_count))
+
 ```
 
 Above, Figure 1 shows the number of hares caught each year of the survey period. The number of hares caught vaired between 0 and 126. The mean number of hares caught is 32, and the median is 19. The graph shows that the number of hares caught peaked at the beginning of the study in 1999. After this peak the number decreased until the first 0 catch year is recorded in 2002. The count then stayed below 50, with around every other year reaching 50, with low catch number in between. The second year of 0 caught occured in 2009, with the last three years of the survey seeing counts below 25. Ensuring that both the number of traps, and days of of the year the traps are set are equal and consistent accross the survey's years can help reduce variance resulting from the studies methods. 
@@ -84,7 +85,7 @@ f_weight <- hare_weights %>% #making a vector of values for just female hare wei
   filter(sex == "f") %>% # selecting female values
   pull(weight) # pulling the data for weights
 
-m_weight <- hare_weights %>% #making vectore of just male weights
+m_weight <- hare_weights %>% #making vector of just male weights
   filter(sex =="m") %>% # selecting male values
   pull(weight) #pulling data for weights
 
@@ -103,7 +104,7 @@ ggplot(data = hare_weights, aes(x = weight)) + # exploratory histogram of weight
 
 # analyzing the data w a ttest 
 
-weights_t <- t.test(f_weight, m_weight) # t test comparing weights based on sex
+invisible(weights_t <- t.test(f_weight, m_weight)) # t test comparing weights based on sex
 weights_t # view results of t test
 
 
@@ -114,6 +115,23 @@ Figure 2 and Figure 3 above show the comparison between female and male juevenil
 ### Juvenile hare weights comparison
 
 ```{r}
-# 
+# Making summary table of statistics
+
+summary_weights <- hare_weights %>% # making summary chart
+  group_by(sex) %>% # grouping by sex
+  summarize(
+    mean = mean(weight), # summarizing mean, stand deviation, median, and counting sample size
+    sd = sd(weight),
+    median = median(weight),
+    sample_size = n()) %>% 
+  rename("Sex" = sex,  # renaming columns 
+         "Standard Deviation" = "sd",
+         "Mean Size (g)" = "mean",
+         "Median Size (g)" = "median", 
+         "Count" = "sample_size")
+
+kable(summary_weights, caption = "Table 2: Summary Statistics for Female and Male Juvenile Hare Weights", digits = 2, align = "c") %>% 
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = F)
+
 ```
 
