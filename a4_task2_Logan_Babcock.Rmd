@@ -40,7 +40,8 @@ Snowshoe hare data and measurements were made accessible through Knut Kielland a
 # making separate year column
 hares_year <- hares_raw %>% # making new dataset with new date column
   mutate(date_new = mdy(date)) %>% # new column with date class
-  mutate(year = year(date_new)) # new column with just year
+  mutate(year = year(date_new)) %>% # new column with just year
+  filter(age == "j") # filtering for just juveniles
 
 yearly_count <- hares_year %>% # making a dataset wiht just year and count
   group_by(year) %>% # grouping by year
@@ -57,7 +58,7 @@ kable(yearly_count_wide, caption = "Table 1: Number of juvenlie snowshoe hares c
 
 ggplot(data = yearly_count, aes(x = Year, y = Count)) + # makign a column chart to display counts
   geom_col(color = "coral2", fill = "coral2") + # adding some color to the graph
-  scale_x_continuous(limits=c(1997,2013), breaks = c(1998, 2000, 2002, 2004, 2006, 2008, 2010, 2012)) + #setting the x ais labels
+  scale_x_continuous(limits=c(1997,2013), breaks = c(1998, 1999, 2000, 2001, 2002, 2003, 2004,2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012)) + #setting the x ais labels
   labs(caption = "Figure 1: Number of juvenile hares caught during sampling from 1998-2012, shown through bar chart with height representing number of individual hares.", title = "Hares caught each year (Babcock)") # adding a title and figure caption
 
 # getting summary stats
@@ -70,9 +71,11 @@ Above, Figure 1 shows the number of hares caught each year of the survey period.
 ### Juvenile Hare Weights
 
 ```{r, layout="l-body-outset", fig.width = 10}
+
 # making a datasets with relevant data
 
 hare_weights <- hares_raw %>% # make a new data set with variables site sex and weight
+  filter(age == "j") %>% # only include juvenile values 
   select(grid, sex, weight) %>% 
   rename("site" = grid) %>%  # rename site column 
   na.omit(hare_weights) # exclude values with NA
