@@ -194,3 +194,5 @@ lm_hare_glance <- broom::glance(lm_hare)
 ```
 
 Simple linear regression was used to explore the relationship between juvenile snowshoe hare hindfoot lenth (mm) and body weight (g) across all three sampling sites, and including both male and female hares. A regression model was found ($\beta$ = `r round(hare_coef,3)`, F(`r lm_hare_glance$df`,`r lm_hare_glance$df.residual`) = `r round(lm_hare_glance$statistic,1)`, p < 0.001) with an R^2^ of `r round(lm_hare_glance$r.squared,3)`.
+
+With this linear regression, the R^2^ value of `r round(lm_hare_glance$r.squared,3)` means that only `r percentage(lm_hare_glance$r.squared,3)` of the variance is in body mass is predictable from the change in hindfoot length. 
