@@ -88,7 +88,7 @@ m_weight <- hare_weights %>% #making vectore of just male weights
   filter(sex =="m") %>% # selecting male values
   pull(weight) #pulling data for weights
 
-# looking at the data
+# looking at the data w graphs
 
 ggplot(data = hare_weights, aes(x = sex, y = weight)) + #exploratory scatter plot graph
   geom_jitter(aes(color = sex)) +
@@ -101,7 +101,7 @@ ggplot(data = hare_weights, aes(x = weight)) + # exploratory histogram of weight
   labs(x = "Weight (g)", y = "Percent of sample", title = "Histogram of juvenile hare weights by sex (Babcock)", caption = "Figure 3: This histogram shows the distribution of hare weights by percent of population, and is faceted by sex, where *f* is female and *m* is male.") + # adding labels
   theme_light()
 
-# analyzing the data 
+# analyzing the data w a ttest 
 
 weights_t <- t.test(f_weight, m_weight) # t test comparing weights based on sex
 weights_t # view results of t test
@@ -109,3 +109,4 @@ weights_t # view results of t test
 
 ```
 
+Figure 2 and Figure 3 above show the comparison between female and male juevenile showshoe hare weights first in a jitter plot and then in a side by sire histograms. In the jitter plot, the hares are separated by the site they were caught at, and it is clear that the least number of hares caught was at the Bonbs, and the most at the Bonrip site. At the Bonrip site, the female weights are more concentrated, and the male weights are more spread out. This is shown further in the histogram, where the percent female weights adhere to a more normal curve, and the male weights have a larger spread with less of a notable peak. The weights of the juvenile hares caught do not vary largely between the sexes, or between site location.  
