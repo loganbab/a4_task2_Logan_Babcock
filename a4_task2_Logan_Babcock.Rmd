@@ -57,16 +57,16 @@ kable(yearly_count_wide, caption = "Table 1: Number of juvenlie snowshoe hares c
 # visualizing the data
 
 ggplot(data = yearly_count, aes(x = Year, y = Count)) + # makign a column chart to display counts
-  geom_col(color = "coral2", fill = "coral2") + # adding some color to the graph
-  scale_x_continuous(limits=c(1997,2013), breaks = c(1998, 1999, 2000, 2001, 2002, 2003, 2004,2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012)) + #setting the x ais labels
-  labs(caption = "Figure 1: Number of juvenile hares caught during sampling from 1998-2012, shown through bar chart with height representing number of individual hares.", title = "Hares caught each year (Babcock)") # adding a title and figure caption
+  geom_col(color = "white", fill = "coral2") + # adding some color to the graph
+  scale_x_continuous(limits=c(1997,2013), breaks = 1999:2012) + #setting the x ais labels
+  labs( title = "Hares Caught Each Year (Babcock)", caption = expression(paste(bold("Figure 1:"), " Number of juvenile hares caught during sampling from 1998-2012, with bar height representing number of individual hares."))) # adding a title and figure caption
 
 # getting summary stats
 
-invisible(summary(yearly_count))
+summary(yearly_count)
 ```
 
-Above, Figure 1 shows the number of hares caught each year of the survey period. The number of hares caught vaired between 38 and 410. The mean number of hares caught is 213, and the median is 179. The graph shows that the number of hares caught decreased in the years 2001 through 2005, but then the count rose to around the max value, and stayed there until the final count in 2012 where the number of hares decreased back to 2005 levels. Ensuring that both the number of traps, and days of of the year the traps are set are equal and consistent accross the survey's years can help reduce variance resulting from the studies methods. 
+Above, Figure 1 shows the number of hares caught each year of the survey period. The number of hares caught vaired between 0 and 126. The mean number of hares caught is 32, and the median is 19. The graph shows that the number of hares caught peaked at the beginning of the study in 1999. After this peak the number decreased until the first 0 catch year is recorded in 2002. The count then stayed below 50, with around every other year reaching 50, with low catch number in between. The second year of 0 caught occured in 2009, with the last three years of the survey seeing counts below 25. Ensuring that both the number of traps, and days of of the year the traps are set are equal and consistent accross the survey's years can help reduce variance resulting from the studies methods. 
 
 ### Juvenile Hare Weights
 
@@ -93,12 +93,12 @@ m_weight <- hare_weights %>% #making vectore of just male weights
 ggplot(data = hare_weights, aes(x = sex, y = weight)) + #exploratory scatter plot graph
   geom_jitter(aes(color = sex)) +
   facet_wrap(~ site) + # adding site as a face wrap for comparison
-  labs(x = "Sex", y = "Weight (g)", title = "Plot of juvenile hare weight by sex faceted by site (Babcock)", caption = "Figure 2: This plot shows the distribution of hare weights for each sex, faceted by survey site, where *f* is female and *m* is male.")
+  labs(x = "Sex", y = "Weight (g)", title = "Plot of Juvenile Hare Wight by Sex and Site (Babcock)", caption = expression(paste(bold("Figure 2:"), "This plot shows the distribution of hare weights for each sex, faceted by survey site, where *f* is female and *m* is male.")))
 
 ggplot(data = hare_weights, aes(x = weight)) + # exploratory histogram of weights
-  geom_histogram(bins = 18, color = "coral2", fill = "coral2") + # setting bins at smaller value than default 30
+  geom_histogram(bins = 18, color = "white", fill = "coral2") + # setting bins at smaller value than default 30
   facet_wrap(~sex) + # separating based on sex to compare the two
-  labs(x = "Weight (g)", y = "Percent of sample", title = "Histogram of juvenile hare weights by sex (Babcock)", caption = "Figure 3: This histogram shows the distribution of hare weights by percent of population, and is faceted by sex, where *f* is female and *m* is male.") + # adding labels
+  labs(x = "Weight (g)", y = "Percent of sample", title = "Histogram of juvenile hare weights by sex (Babcock)", caption = expression(paste(bold("Figure 3:"), "This histogram shows the distribution of hare weights by percent of population, and is faceted by sex, where *f* is female and *m* is male."))) + # adding labels
   theme_light()
 
 # analyzing the data w a ttest 
@@ -110,3 +110,10 @@ weights_t # view results of t test
 ```
 
 Figure 2 and Figure 3 above show the comparison between female and male juevenile showshoe hare weights first in a jitter plot and then in a side by sire histograms. In the jitter plot, the hares are separated by the site they were caught at, and it is clear that the least number of hares caught was at the Bonbs, and the most at the Bonrip site. At the Bonrip site, the female weights are more concentrated, and the male weights are more spread out. This is shown further in the histogram, where the percent female weights adhere to a more normal curve, and the male weights have a larger spread with less of a notable peak. The weights of the juvenile hares caught do not vary largely between the sexes, or between site location.  
+
+### Juvenile hare weights comparison
+
+```{r}
+# 
+```
+
