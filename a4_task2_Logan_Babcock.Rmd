@@ -165,6 +165,10 @@ weight_foot <- hares_raw %>%
   filter(age == "j") %>% # getting juveniles
   select(weight, hindft) # keeping only columns for weight and hind ft
 
+# exploratory graph
+
+plot(weight_foot)
+
 # visualizing the relationship
 
 ggplot(data = weight_foot, aes(x = hindft, y = weight)) + # making a graph with the variables
@@ -192,6 +196,23 @@ lm_hare_glance <- broom::glance(lm_hare)
 
 ```
 
+```{r}
+# exploratory visualizations
+
+plot(lm_hare)
+
+```
+
+```{r}
+# pearsons r
+hare_cor <- cor.test(weight_foot$weight, weight_foot$hindft)
+
+# viewing the result
+hare_cor
+```
+
 Simple linear regression was used to explore the relationship between juvenile snowshoe hare hindfoot lenth (mm) and body weight (g) across all three sampling sites, including both male and female hares. A regression model was found ($\beta$ = `r round(hare_coef,3)`, F(`r lm_hare_glance$df`,`r lm_hare_glance$df.residual`) = `r round(lm_hare_glance$statistic,1)`, p < 0.001) with an R^2^ of `r round(lm_hare_glance$r.squared,3)`.
+
+Using a Pearson's R correlation, we see that there is a *moderatley strong* correlation between juvenile hare hind foot length and body weight (*r* = `r round(hare_cor$estimate,2)`, t(`r hare_cor$parameter`) = `r round(hare_cor$statistic,2)`, p < 0.001). 
 
 With this linear regression, the R^2^ value of `r (lm_hare_glance$r.squared)` means that only `r (lm_hare_glance$r.squared) * 100`% of the variance is in body mass is predictable from the change in hindfoot length. 
