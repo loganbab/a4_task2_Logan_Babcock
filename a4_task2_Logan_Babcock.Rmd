@@ -5,7 +5,7 @@ date: "November 4, 2021"
 output: html_document
 ---
 
-```{r setup, include=FALSE, messages = FALSE, warning = FALSE}
+```{r setup, include= FALSE, messages = FALSE, warning = FALSE}
 knitr::opts_chunk$set(echo = FALSE,  messages = FALSE, warning = FALSE, fig.align = "center")
 
 library(tidyverse)
@@ -64,7 +64,7 @@ ggplot(data = yearly_count, aes(x = Year, y = Count)) + # makign a column chart 
 
 ```
 
-Above, Figure 1 shows the number of hares caught each year of the survey period. The number of hares caught vaired between 0 and 126. The minimum is `r min(yearly_count$Count)`, and the maximum is ` r max(yearly_count$Count)`. The mean number of hares caught is `r mean(yearly_count$Count)`, and the median is `r median(yearly_count$Count)`. The graph shows that the number of hares caught peaked at the beginning of the study in 1999. After this peak the number decreased until the first 0 catch year is recorded in 2002. The count then stayed below 50, with around every other year reaching 50, with low catch number in between. The second year of 0 caught occured in 2009, with the last three years of the survey seeing counts below 25. Ensuring that both the number of traps, and days of of the year the traps are set are equal and consistent accross the survey's years can help reduce variance resulting from the studies methods. 
+Above, Figure 1 shows the number of hares caught each year of the survey period. The number of hares caught vaired between 0 and 126. The minimum is `r min(yearly_count$Count)`, and the maximum is `r max(yearly_count$Count)`. The mean number of hares caught is `r mean(yearly_count$Count)`, and the median is `r median(yearly_count$Count)`. The graph shows that the number of hares caught peaked at the beginning of the study in 1999. After this peak the number decreased until the first 0 catch year is recorded in 2002. The count then stayed below 50, with around every other year reaching 50, with low catch number in between. The second year of 0 caught occured in 2009, with the last three years of the survey seeing counts below 25. Ensuring that both the number of traps, and days of of the year the traps are set are equal and consistent accross the survey's years can help reduce variance resulting from the studies methods. 
 
 ### Juvenile Hare Weights
 
@@ -154,7 +154,7 @@ Getting a p-value of `r weights_t[["p.value"]]` means that there is a 0.7% chanc
 
 ### Juvenile Weight & Hind Foot Length
 
-```{r}
+```{r include = FALSE}
 # making data set with only weight and foot size included
 
 weight_foot <- hares_raw %>% 
@@ -167,7 +167,7 @@ plot(weight_foot)
 
 ```
 
-```{r, layout="l-body-outset", fig.width = 10}}
+```{r, layout= "l-body-outset", fig.width = 10}
 # visualizing the relationship
 
 ggplot(data = weight_foot, aes(x = hindft, y = weight)) + # making a graph with the variables
@@ -207,7 +207,7 @@ plot(lm_hare)
 hare_cor <- cor.test(weight_foot$weight, weight_foot$hindft)
 
 # viewing the result
-hare_cor
+invisible(hare_cor)
 ```
 
 Simple linear regression was used to explore the relationship between juvenile snowshoe hare hindfoot lenth (mm) and body weight (g) across all three sampling sites, including both male and female hares. A regression model was found ($\beta$ = `r round(hare_coef,3)`, F(`r lm_hare_glance$df`,`r lm_hare_glance$df.residual`) = `r round(lm_hare_glance$statistic,1)`, p < 0.001) with an R^2^ of `r round(lm_hare_glance$r.squared,3)`.
