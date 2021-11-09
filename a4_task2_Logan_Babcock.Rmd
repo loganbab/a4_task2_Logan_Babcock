@@ -5,7 +5,7 @@ date: "November 4, 2021"
 output: html_document
 ---
 
-```{r setup, include= FALSE, messages = FALSE, warning = FALSE}
+```{r, setup, include = FALSE}
 knitr::opts_chunk$set(echo = FALSE,  messages = FALSE, warning = FALSE, fig.align = "center")
 
 library(tidyverse)
@@ -15,6 +15,10 @@ library(kableExtra)
 library(lubridate)
 library(effsize)
 
+```
+
+```{r}
+# read in data
 
 hares_raw <- read.csv(here("data", "bonanza_hares.csv"))
 
@@ -45,18 +49,13 @@ yearly_count <- hares_year %>% # making a dataset wiht just year and count
   count() %>%  #adding all observations for that year
   rename(Year = year, Count = n)
 
-yearly_count_wide <- pivot_wider(yearly_count, names_from = Year, values_from = Count)
-
-
-kable(yearly_count_wide, caption = "Table 1: Number of juvenlie snowshoe hares caught per year" , align = "c") %>% # making a finalized table with title
-  kable_styling(bootstrap_options = c("striped", "hover"), full_width = F) # customizing table
-
 # visualizing the data
 
 ggplot(data = yearly_count, aes(x = Year, y = Count)) + # makign a column chart to display counts
   geom_col(color = "white", fill = "coral2") + # adding some color to the graph
   scale_x_continuous(limits=c(1997,2013), breaks = 1999:2012) + #setting the x ais labels
-  labs( title = "Hares Caught Each Year (Babcock)", caption = expression(paste(bold("Figure 1:"), " Number of juvenile hares caught during sampling from 1998-2012, with bar height representing number of individual hares."))) # adding a title and figure caption
+  scale_y_continuous(breaks= c(0, 25, 50, 75, 100, 125, 150)) +
+  labs( caption = expression(paste(bold("Figure 1:"), " Number of juvenile hares caught during sampling from 1998-2012, with bar height representing number of individual hares."))) # adding figure caption
 
 # getting summary stats
 
@@ -75,7 +74,16 @@ Above, Figure 1 shows the number of hares caught each year of the survey period.
 hare_weights <- hares_raw %>% # make a new data set with variables site sex and weight
   filter(age == "j") %>% # only include juvenile values 
   select(grid, sex, weight) %>% 
-  rename("site" = grid)  # rename site column 
+  mutate(full_grid = case_when( # expanding full site names 
+    grid == "bonmat" ~ "Bonanza Mature",
+    grid == "bonrip" ~ "Bonanza Riparian",
+    grid == "bonbs" ~ "Bonanza Black Spruce")) %>% 
+  rename("site" = full_grid) %>%  # rename site column
+  mutate(full_sex = case_when( # expanding full sex 
+    sex == "f" ~ "Female",
+    sex == "m" ~ "Male"))
+
+# making vectors for female and male weights
 
 f_weight <- hare_weights %>% # making a vector of values for just female hare weights
   filter(sex == "f") %>% # selecting female values
@@ -86,19 +94,20 @@ m_weight <- hare_weights %>% # making vector of just male weights
   pull(weight) # wpulling data for weights
 
 # looking at the data w graphs
+#jitter plot 
 
-ggplot(data = hare_weights, aes(x = sex, y = weight)) + #exploratory scatter plot graph
-  geom_jitter(aes(color = sex)) +
+ggplot(data = hare_weights, aes(x = full_sex, y = weight)) + #exploratory scatter plot graph
+  geom_jitter(aes(color = full_sex)) +
   facet_wrap(~ site) + # adding site as a face wrap for comparison
-  labs(x = "Sex", y = "Weight (g)", title = "Plot of Juvenile Hare Wight by Sex and Site (Babcock)", caption = expression(paste(bold("Figure 2:"), "This plot shows the distribution of hare weights for each sex, faceted by survey site, where *f* is female and *m* is male.")))
+  labs(x = "Sex", y = "Weight (g)", caption = expression(paste(bold("Figure 2:"), "This plot shows the distribution of hare weights for each sex, faceted by survey site.")))
 
+# histogram
 
-ggplot(data = hare_weights, aes(x = weight, fill = sex)) + # exploratory histogram of weights with sex stacked
+ggplot(data = hare_weights, aes(x = weight, fill = full_sex)) + # exploratory histogram of weights with sex stacked
   geom_histogram(bins = 18, color = "white") + # setting bins at smaller value than default 30
   facet_wrap(~site) + # separating based on site to compare
-  labs(x = "Weight (g)", y = "Percent of sample", legend = "Sex", title = "Histogram of Juvenile Hare Weights by Site and Sex (Babcock)", caption = expression(paste(bold("Figure 3:"), "This histogram shows the distribution of hare weights by percent of population, and is faceted by site"))) + # adding labels
+  labs(x = "Weight (g)", y = "Percent of sample", caption = expression(paste(bold("Figure 3:"), "This histogram shows the distribution of hare weights by percent of population, and is faceted by site"))) + # adding labels
   theme_light()
-
 
 ```
 
@@ -130,7 +139,9 @@ weight_cohen # viewing results
 ```{r}
 # Making summary table of statistics
 
-summary_weights <- hare_weights %>% # making summary chart
+weights_full <- na.omit(hare_weights)
+
+summary_weights <- weights_full %>% # making summary chart
   group_by(sex) %>% # grouping by sex
   summarize(
     mean = mean(weight), # summarizing mean, stand deviation, median, and counting sample size
@@ -172,7 +183,7 @@ plot(weight_foot)
 
 ggplot(data = weight_foot, aes(x = hindft, y = weight)) + # making a graph with the variables
   geom_point(color = "coral2") +
-  labs(x = "Hindfoot Length (mm)", y = "Weight (g)", title = "Juvenile Hare Hindfoot Lenth and Weight Relationship (Babcock)", caption = expression(paste(bold("Figure 4:"), "Hindfoot lenth (mm) and hare weight in grams are plotted to visualize their relationship")))
+  labs(x = "Hindfoot Length (mm)", y = "Weight (g)", caption = expression(paste(bold("Figure 4:"), "Hindfoot lenth (mm) and hare weight in grams are plotted to visualize their relationship")))
   
 ```
 
