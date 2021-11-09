@@ -227,7 +227,7 @@ With this linear regression, the R^2^ value of `r (lm_hare_glance$r.squared)` me
 
 Using a Pearson's R correlation, we see that there is a *moderatley strong* correlation between juvenile hare hind foot length and body weight (*r* = `r round(hare_cor$estimate,2)`, t(`r hare_cor$parameter`) = `r round(hare_cor$statistic,2)`, p < 0.001). 
 
-Assuming normality for these variable's relationship may cause issues, since the exploratory data visualizations showed that the residuals do not have a typical normal distribution. The linear model describes the data well to a point, but havng assumptions that are unbacked by the data can lead to irresponsible data representation and innacurate conclusions. Additionally, the sex of the juvenile hare may have an impact on this relationship, and that is a variable not addressed by this analysis. 
+Assuming normality for these variable's relationship may cause issues, since the exploratory data visualizations showed that the residuals do not have a typical normal distribution. The linear model describes the data well to a point, but having assumptions that are unbacked by the data can lead to irresponsible data representation and innacurate conclusions. Additionally, the sex of the juvenile hare may have an impact on this relationship, and that is a variable not addressed by this analysis. 
 
 ## Summary of Findings 
 - The most juvenile hares were caught in the first year of the study (1999)
