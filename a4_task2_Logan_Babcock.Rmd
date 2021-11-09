@@ -79,16 +79,15 @@ Above, Figure 1 shows the number of hares caught each year of the survey period.
 hare_weights <- hares_raw %>% # make a new data set with variables site sex and weight
   filter(age == "j") %>% # only include juvenile values 
   select(grid, sex, weight) %>% 
-  rename("site" = grid) %>%  # rename site column 
-  na.omit(hare_weights) # exclude values with NA
+  rename("site" = grid)  # rename site column 
 
-f_weight <- hare_weights %>% #making a vector of values for just female hare weights
+f_weight <- hare_weights %>% # making a vector of values for just female hare weights
   filter(sex == "f") %>% # selecting female values
   pull(weight) # pulling the data for weights
 
-m_weight <- hare_weights %>% #making vector of just male weights
+m_weight <- hare_weights %>% # making vector of just male weights
   filter(sex =="m") %>% # selecting male values
-  pull(weight) #pulling data for weights
+  pull(weight) # wpulling data for weights
 
 # looking at the data w graphs
 
@@ -107,9 +106,9 @@ ggplot(data = hare_weights, aes(x = weight, fill = sex)) + # exploratory histogr
 
 ```
 
-Figure 2 and Figure 3 above show the comparison between female and male juevenile showshoe hare weights first in a jitter plot and then in a side by sire histograms. In the jitter plot, the hares are separated by the site they were caught at, and it is clear that the least number of hares caught was at the Bonbs, and the most at the Bonrip site. At the Bonrip site, the female weights are more concentrated, and the male weights are more spread out. This is shown further in the histogram, where the percent female weights adhere to a more normal curve, and the male weights have a larger spread with less of a notable peak. The weights values do not vary largely between the sexes, or between site location.
+Figure 2 and Figure 3 above show the comparison between female and male juevenile showshoe hare weights first in a jitter plot and then in a side by sire histograms. Samples taken where sex was not recorded are represented by 'NA'. In the jitter plot, the hares are separated by the site they were caught at, and it is clear that the least number of hares caught was at the Bonbs, and the most at the Bonrip site. At the Bonrip site, the female weights are more concentrated, and the male weights are more spread out. This is shown further in the histogram, where the percent female weights adhere to a more normal curve, and the male weights have a larger spread with less of a notable peak. The weights values do not vary largely between the sexes, or between site location.
 
-### Juvenile hare weights comparison
+### Juvenile Hare Weights Comparison
 ```{r, include = FALSE}
 # exploratory graphs
 
@@ -193,6 +192,6 @@ lm_hare_glance <- broom::glance(lm_hare)
 
 ```
 
-Simple linear regression was used to explore the relationship between juvenile snowshoe hare hindfoot lenth (mm) and body weight (g) across all three sampling sites, and including both male and female hares. A regression model was found ($\beta$ = `r round(hare_coef,3)`, F(`r lm_hare_glance$df`,`r lm_hare_glance$df.residual`) = `r round(lm_hare_glance$statistic,1)`, p < 0.001) with an R^2^ of `r round(lm_hare_glance$r.squared,3)`.
+Simple linear regression was used to explore the relationship between juvenile snowshoe hare hindfoot lenth (mm) and body weight (g) across all three sampling sites, including both male and female hares. A regression model was found ($\beta$ = `r round(hare_coef,3)`, F(`r lm_hare_glance$df`,`r lm_hare_glance$df.residual`) = `r round(lm_hare_glance$statistic,1)`, p < 0.001) with an R^2^ of `r round(lm_hare_glance$r.squared,3)`.
 
-With this linear regression, the R^2^ value of `r round(lm_hare_glance$r.squared,3)` means that only `r percentage(lm_hare_glance$r.squared,3)` of the variance is in body mass is predictable from the change in hindfoot length. 
+With this linear regression, the R^2^ value of `r (lm_hare_glance$r.squared)` means that only `r (lm_hare_glance$r.squared) * 100`% of the variance is in body mass is predictable from the change in hindfoot length. 
