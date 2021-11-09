@@ -21,14 +21,10 @@ hares_raw <- read.csv(here("data", "bonanza_hares.csv"))
 ```
 
 ## 1. Overview
-This is an exploratory report on juvenile snoeshoe hares (*Lepus americanus*) using data collected during the  US Long Term Ecological Research Network's study on Snowshoe hare physical data in the Bonanza Creek Experimental Forest. Using the data collected from 1999-2012, this report will analyze the counts and sizes of juvenile hares.
-
-*COME BACK TO FINISH THIS  - add info on what the report contains*
+This is an exploratory report on juvenile snoeshoe hares (*Lepus americanus*) using data collected during the  US Long Term Ecological Research Network's study on Snowshoe hare physical data in the Bonanza Creek Experimental Forest. Using the data collected from 1999-2012, this report will analyze the counts and sizes of juvenile hares. This report will also compare the weights of juvenile hares ccording to sex, and perform a simple linear analysis on the relationship between hind foot length and body mass. 
 
 ## 2. Data and Methods
-Snowshoe hare data and measurements were made accessible through Knut Kielland and associates at the Bonanza Creek LTER. The data contain measurements and observations on hares during a capture-recapture study done in Alaska's Tanana valley from 1999-2012. 
-
-*COME BACK TO FINISH THIS - add info on stats tests and whats included* 
+Snowshoe hare data and measurements were made accessible through Knut Kielland and associates at the Bonanza Creek LTER. The data contain measurements and observations on hares during a capture-recapture study done in Alaska's Tanana valley from 1999-2012. Following exploratory data visualization, body mass measurements between male and female juvenile showshoe hares are compared using a two-sample t-test using a significance level (α) of 0.05 throughout. Differences between groups are described by a Cohen's d effect size. The relationship between body mass and hind foot length is explored by simple linear regression. All analysis are in R version 3.6.3 and R Studio Version 1.1.463
 
 ## Data Visualization and Analysis
 
@@ -169,6 +165,9 @@ weight_foot <- hares_raw %>%
 
 plot(weight_foot)
 
+```
+
+```{r, layout="l-body-outset", fig.width = 10}}
 # visualizing the relationship
 
 ggplot(data = weight_foot, aes(x = hindft, y = weight)) + # making a graph with the variables
@@ -177,7 +176,7 @@ ggplot(data = weight_foot, aes(x = hindft, y = weight)) + # making a graph with 
   
 ```
 
-```{r}
+```{r include = FALSE}
 # linear model, stored as lm_hare
 
 lm_hare <- lm(weight ~ hindft, data = weight_foot) # linear model with foot and weight measurements
@@ -196,14 +195,14 @@ lm_hare_glance <- broom::glance(lm_hare)
 
 ```
 
-```{r}
+```{r include = FALSE}
 # exploratory visualizations
 
 plot(lm_hare)
 
 ```
 
-```{r}
+```{r inclde = FALSE}
 # pearsons r
 hare_cor <- cor.test(weight_foot$weight, weight_foot$hindft)
 
@@ -213,6 +212,20 @@ hare_cor
 
 Simple linear regression was used to explore the relationship between juvenile snowshoe hare hindfoot lenth (mm) and body weight (g) across all three sampling sites, including both male and female hares. A regression model was found ($\beta$ = `r round(hare_coef,3)`, F(`r lm_hare_glance$df`,`r lm_hare_glance$df.residual`) = `r round(lm_hare_glance$statistic,1)`, p < 0.001) with an R^2^ of `r round(lm_hare_glance$r.squared,3)`.
 
+With this linear regression, the R^2^ value of `r (lm_hare_glance$r.squared)` means that only `r (lm_hare_glance$r.squared) * 100`% of the variance is in body mass is predictable from the change in hindfoot length. 
+
 Using a Pearson's R correlation, we see that there is a *moderatley strong* correlation between juvenile hare hind foot length and body weight (*r* = `r round(hare_cor$estimate,2)`, t(`r hare_cor$parameter`) = `r round(hare_cor$statistic,2)`, p < 0.001). 
 
-With this linear regression, the R^2^ value of `r (lm_hare_glance$r.squared)` means that only `r (lm_hare_glance$r.squared) * 100`% of the variance is in body mass is predictable from the change in hindfoot length. 
+Assuming normality for these variable's relationship may cause issues, since the exploratory data visualizations showed that the residuals do not have a typical normal distribution. The linear model describes the data well to a point, but havng assumptions that are unbacked by the data can lead to irresponsible data representation and innacurate conclusions. Additionally, the sex of the juvenile hare may have an impact on this relationship, and that is a variable not addressed by this analysis. 
+
+## Summary of Findings 
+- The most juvenile hares were caught in the first year of the study (1999)
+- Male juvenile snowshoe hares are on average larger in bodyweight, with a mean of `r summary_weights$mean[2]` than female juveniles, who have a mean of `r summary_weights$mean[1]`
+- Body weight appears related to hind foot length; the relationship (by simple linear regreession) has a slope (expected average increase in body mass with a 1mm increase in hind foot length) of `r lm_hare_tidy$statistic[2]`
+
+## Next Steps
+- Adding more potentially predictor variables to the linear analysis, such as sex or site
+-  Investigating if the relationship between hind foot length and body mass is continued in adult snowshoe hares
+
+### Data Citation
+Kielland, K., F.S. Chapin, R.W. Ruess, and Bonanza Creek LTER. 2017. Snowshoe hare physical data in Bonanza Creek Experimental Forest: 1999-Present ver 22. Environmental Data Initiative. https://doi.org/10.6073/pasta/03dce4856d79b91557d8e6ce2cbcdc14
