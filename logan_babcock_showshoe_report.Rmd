@@ -1,0 +1,266 @@
+---
+title: "Juvenile Snowshow Hare Exploratory Report"
+author: "Logan Babcock"
+date: "November 4, 2021"
+output: html_document
+---
+
+```{r, setup, include = FALSE, message = FALSE}
+knitr::opts_chunk$set(echo = FALSE,  messages = FALSE, warning = FALSE, fig.align = "center")
+
+library(tidyverse)
+library(here)
+library(janitor)
+library(kableExtra)
+library(lubridate)
+library(effsize)
+
+```
+
+```{r}
+# read in data
+
+hares_raw <- read.csv(here("data", "bonanza_hares.csv"))
+
+```
+
+## 1. Overview
+This is an exploratory report on juvenile snoeshoe hares (*Lepus americanus*) using data collected during the  US Long Term Ecological Research Network's study on Snowshoe hare physical data in the Bonanza Creek Experimental Forest. Using the data collected from 1999-2012, this report will analyze the counts and sizes of juvenile hares. This report will also compare the weights of juvenile hares according to sex, and perform a simple linear analysis on the relationship between hind foot length and body mass. 
+
+## 2. Data and Methods
+Snowshoe hare data and measurements were made accessible through Knut Kielland and associates at the Bonanza Creek LTER. The data contain measurements and observations on hares during a capture-recapture study done in Alaska's Tanana valley from 1999-2012. Following exploratory data visualization, body mass measurements between male and female juvenile showshoe hares are compared using a two-sample t-test using a significance level (α) of 0.05 throughout. Differences between groups are described by a Cohen's d effect size. The relationship between body mass and hind foot length is explored by simple linear regression. All analysis are in R version 3.6.3 and R Studio Version 1.1.463
+
+## Data Visualization and Analysis
+
+### Juvenile Hare Survey Counts
+
+```{r, layout="l-body-outset", fig.width = 10}
+
+# finding juvenile hare counts
+
+# making separate year column
+hares_year <- hares_raw %>% # making new dataset with new date column
+  mutate(date_new = mdy(date)) %>% # new column with date class
+  mutate(year = year(date_new)) %>% # new column with just year
+  filter(age == "j") # filtering for just juveniles
+
+yearly_count <- hares_year %>% # making a dataset wiht just year and count
+  group_by(year) %>% # grouping by year
+  count() %>%  #adding all observations for that year
+  rename(Year = year, Count = n)
+
+# visualizing the data
+
+ggplot(data = yearly_count, aes(x = Year, y = Count)) + # makign a column chart to display counts
+  geom_col(color = "white", fill = "coral2") + # adding some color to the graph
+  scale_x_continuous(limits=c(1998,2013), breaks = 1998:2012) + #setting the x ais labels
+  scale_y_continuous(breaks= c(0, 25, 50, 75, 100, 125, 150)) +
+  theme(axis.text.x = element_text(size = 7, hjust = 0.5),
+        axis.text.y = element_text(size = 7),
+        axis.title.x = element_text(hjust = 0.5, 
+                                    vjust = 0.5),
+        plot.caption = element_text(hjust = 0.9))
+
+# getting summary stats
+
+ invisible(summary(yearly_count))
+
+```
+**Figure 1:** Number of juvenile hares caught during sampling from 1998-2012 at Bonanza LTE.
+  
+Above, Figure 1 shows the number of hares caught each year of the survey period. The number of hares caught vaired between 0 and 126. The minimum is `r min(yearly_count$Count)`, and the maximum is `r max(yearly_count$Count)`. The mean number of hares caught is `r mean(yearly_count$Count)`, and the median is `r median(yearly_count$Count)`. The graph shows that the number of hares caught peaked at the beginning of the study in 1999. After this peak the number decreased until the first year with no juvenile hare observations is recorded in 1998, with the second no-catch year being 2002. The last year without juvenile hare observations occured in 2009, with the last three years of the survey seeing counts below 25. Ensuring that both the number of traps, and days of of the year the traps (known as effort) are set are equal and consistent accross the survey's years can help reduce variance resulting from the studies methods. Variation in effort could result in fluxuations in the counts that are not representative of the data. 
+
+### Juvenile Hare Weights
+
+```{r, layout="l-body-outset", fig.width = 10}
+
+# making a datasets with relevant data
+
+hare_weights <- hares_raw %>% # make a new data set with variables site sex and weight
+  filter(age == "j") %>% # only include juvenile values 
+  select(grid, sex, weight) %>% 
+  mutate(full_grid = case_when( # expanding full site names 
+    grid == "bonmat" ~ "Bonanza Mature",
+    grid == "bonrip" ~ "Bonanza Riparian",
+    grid == "bonbs" ~ "Bonanza Black Spruce")) %>% 
+  rename("site" = full_grid) %>%  # rename site column
+  mutate(Sex = case_when( # expanding full sex 
+    sex == "f" ~ "Female",
+    sex == "m" ~ "Male"))
+
+# making vectors for female and male weights
+
+f_weight <- hare_weights %>% # making a vector of values for just female hare weights
+  filter(sex == "f") %>% # selecting female values
+  pull(weight) # pulling the data for weights
+
+m_weight <- hare_weights %>% # making vector of just male weights
+  filter(sex =="m") %>% # selecting male values
+  pull(weight) # wpulling data for weights
+
+# looking at the data w graphs
+#jitter plot 
+
+ggplot(data = hare_weights, aes(x = Sex, y = weight)) + #exploratory scatter plot graph
+  geom_jitter(aes(color = Sex)) +
+  facet_wrap(~ site) + # adding site as a face wrap for comparison
+    theme(axis.text.x = element_text(size = 7, hjust = 0.5), # aesthetic adjustments
+        axis.text.y = element_text(size = 7),
+        axis.title.x = element_text(hjust = 0.5, 
+                                    vjust = 0.5),
+        plot.caption = element_text(hjust = 0.9))+
+  labs(color= "Sex") # changing legend title
+
+```
+**Figure 2:** This plot shows the distribution of hare weights for each sex, faceted by survey site.
+
+```{r}
+# histogram
+
+ggplot(data = hare_weights, aes(x = weight, fill = Sex)) + # exploratory histogram of weights with sex stacked
+  geom_histogram(bins = 18, color = "white") + # setting bins at smaller value than default 30
+  facet_wrap(~site) + # separating based on site to compare
+  labs(x = "Weight (g)", y = "Percent of sample") + # adding labels
+  theme_light() +
+  theme(axis.text.x = element_text(size = 7, hjust = 0.5), # aesthetic adjustments
+        axis.text.y = element_text(size = 7),
+        axis.title.x = element_text(hjust = 0.5, 
+                                    vjust = 0.5))
+```
+**Figure 3:** This histogram shows the distribution of hare weights by percent of population, and is faceted by site. 
+  
+Figure 2 and Figure 3 above show the comparison between female and male juvenile showshoe hare weights first in a jitter plot and then in a side by side histograms. Samples taken where sex was not recorded are represented by 'NA'. In the jitter plot, the hares are separated by the site they were caught at, and it is clear that the least number of hares caught was at the Bonanza Black Spruce site, and the most at the Bonanza Riparian site. At the Ripairian site, the female observations are more concentrated, and the male observations are more spread out. This is shown further in the histogram, where the distribution of female weights adhere to a curve with a peak, and the male weights have a larger spread with less of a notable peak. The weights do not vary largely between the sexes, or between site location. On average at each of the site, female and male juvenile hares have similar weight distributions. 
+
+### Juvenile Hare Weights Comparison
+```{r, include = FALSE}
+# exploratory graphs
+
+ggplot(hare_weights, aes(sample = weight)) + # exploratory qq plot faceted by sex
+  geom_qq() +
+  facet_wrap(~sex)
+
+ggplot(hare_weights, aes(sample = weight)) + # exploratory qq plot with population considered together
+  geom_qq()
+
+# analyzing the data w a ttest 
+
+weights_t <- t.test(f_weight, m_weight) # t test comparing weights based on sex
+weights_t # view results of t test
+
+# getting effect size 
+
+weight_cohen <- cohen.d(f_weight, m_weight) # effect size
+weight_cohen # viewing results 
+
+```
+<center>**Table 2:** Summary Statistics for Female and Male Juvenile Hare Weights</center>
+```{r}
+# Making summary table of statistics
+
+weights_full <- na.omit(hare_weights)
+
+summary_weights <- weights_full %>% # making summary chart
+  group_by(sex) %>% # grouping by sex
+  summarize(
+    mean = mean(weight), # summarizing mean, stand deviation, median, and counting sample size
+    sd = sd(weight),
+    median = median(weight),
+    sample_size = n()) %>% 
+  rename("Sex" = sex,  # renaming columns 
+         "Standard Deviation" = "sd",
+         "Median Size (g)" = "median", 
+         "Count" = "sample_size",
+         "Mean" = "mean")
+
+kable(summary_weights, digits = 2, align = "c") %>% 
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = F)
+
+```
+In this section we compared the weights of juvenile showshoe hares based on sex using a unpaired t-test, a Cohen's test to see the effect size, and using summary statistics.
+
+On average, mean weight for female juvenile hares (`r round(summary_weights$Mean[1])` g) is less than that for male juvenile hares (`r round(summary_weights$Mean[2])` g). The effect size is small, with a Cohen's D of (Cohen's *d* = `r weight_cohen$estimate`). The difference between the means is significant (two-sample t-test, t = `r round(weights_t$statistic[3])`, p < 0.01).
+
+Getting a p-value of `r weights_t[["p.value"]]` means that there is a 0.7% chance of getting means that are at least as different as those seen here if they're drawn from populations with the same mean. This means that we would reject the null hypothesis that the population's mean weights are the same.
+
+### Juvenile Weight & Hind Foot Length
+
+```{r include = FALSE}
+# making data set with only weight and foot size included
+
+weight_foot <- hares_raw %>% 
+  filter(age == "j") %>% # getting juveniles
+  select(weight, hindft) # keeping only columns for weight and hind ft
+
+# exploratory graph
+
+plot(weight_foot)
+
+```
+
+```{r, layout= "l-body-outset", fig.width = 10}
+# visualizing the relationship
+
+ggplot(data = weight_foot, aes(x = hindft, y = weight)) + # making a graph with the variables
+  geom_point(color = "coral2") +
+  labs(x = "Hindfoot Length (mm)", y = "Weight (g)") +
+  theme(axis.text.x = element_text(size = 7, hjust = 0.5), # aesthetic adjustments
+        axis.text.y = element_text(size = 7),
+        axis.title.x = element_text(hjust = 0.5, 
+                                    vjust = 0.5),
+        plot.caption = element_text(hjust = 0.9))
+  
+```
+**Figure 4:** Hindfoot lenth (mm) and hare weight in grams are plotted to visualize their relationship.
+```{r include = FALSE}
+# linear model, stored as lm_hare
+
+lm_hare <- lm(weight ~ hindft, data = weight_foot) # linear model with foot and weight measurements
+
+# tidying the summary output
+
+lm_hare_tidy <- broom::tidy(lm_hare) #using broom::tidy to make cleaner output table
+
+# getting coefficient 
+
+hare_coef <- lm_hare_tidy$estimate[2]
+
+# metrics at a glance
+
+lm_hare_glance <- broom::glance(lm_hare)
+
+```
+
+```{r include = FALSE}
+# exploratory visualizations
+
+plot(lm_hare)
+
+```
+
+```{r inclde = FALSE}
+# pearsons r
+hare_cor <- cor.test(weight_foot$weight, weight_foot$hindft)
+
+# viewing the result
+invisible(hare_cor)
+```
+
+Simple linear regression was used to explore the relationship between juvenile snowshoe hare hindfoot lenth (mm) and body weight (g) across all three sampling sites, including both male and female hares. A regression model was found ($\beta$ = `r round(hare_coef,3)`, F(`r lm_hare_glance$df`,`r lm_hare_glance$df.residual`) = `r round(lm_hare_glance$statistic,1)`, p < 0.001) with an R^2^ of `r round(lm_hare_glance$r.squared,3)`.
+
+With this linear regression, the R^2^ value of `r (lm_hare_glance$r.squared)` means that only `r (lm_hare_glance$r.squared) * 100`% of the variance is in body mass is predictable from the change in hindfoot length. 
+
+Using a Pearson's R correlation, we see that there is a *moderatley strong* correlation between juvenile hare hind foot length and body weight (*r* = `r round(hare_cor$estimate,2)`, t(`r hare_cor$parameter`) = `r round(hare_cor$statistic,2)`, p < 0.001). 
+
+Assuming normality for these variable's relationship may be irresponsible since the exploratory data visualizations showed that the residuals do not have a typical normal distribution. The linear model describes the data well to a point, but having assumptions that are unbacked by the data can lead to irresponsible data representation and innacurate conclusions. This linear model assumed hemoscedasticity, but the exploratory visualizations show that the data is heteroscedastic. Additionally, the sex of the juvenile hare may have an impact on this relationship, and that is a variable not addressed by this analysis. 
+
+## Summary of Findings 
+- The most juvenile hares were caught in the second year of the study (1999)
+- Male juvenile snowshoe hares are on average larger in bodyweight, with a mean of `r summary_weights$mean[2]` than female juveniles, who have a mean of `r summary_weights$mean[1]`
+- Body weight appears related to hind foot length; the relationship (by simple linear regreession) has a slope (expected average increase in body mass with a 1mm increase in hind foot length) of `r lm_hare_tidy$statistic[2]`
+
+## Next Steps
+- Adding more predictor variables to the linear analysis, such as sex or site may reveal other predictors on juvenile hare weight
+-  Investigating if the relationship between hind foot length and body mass is continued in adult snowshoe hares
+
+### Data Citation
+Kielland, K., F.S. Chapin, R.W. Ruess, and Bonanza Creek LTER. 2017. Snowshoe hare physical data in Bonanza Creek Experimental Forest: 1999-Present ver 22. Environmental Data Initiative. https://doi.org/10.6073/pasta/03dce4856d79b91557d8e6ce2cbcdc14
