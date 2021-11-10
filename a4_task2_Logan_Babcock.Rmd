@@ -1,5 +1,5 @@
 ---
-title: "Assignment 4 Task 2"
+title: "Juvenile Snowshow Hare Exploratory Report"
 author: "Logan Babcock"
 date: "November 4, 2021"
 output: html_document
@@ -55,7 +55,6 @@ ggplot(data = yearly_count, aes(x = Year, y = Count)) + # makign a column chart 
   geom_col(color = "white", fill = "coral2") + # adding some color to the graph
   scale_x_continuous(limits=c(1998,2013), breaks = 1998:2012) + #setting the x ais labels
   scale_y_continuous(breaks= c(0, 25, 50, 75, 100, 125, 150)) +
-  labs( caption = expression(paste(bold("Figure 1:"), " Number of juvenile hares caught during sampling from 1998-2012 at Bonanza LTE. "))) + # adding figure caption
   theme(axis.text.x = element_text(size = 7, hjust = 0.5),
         axis.text.y = element_text(size = 7),
         axis.title.x = element_text(hjust = 0.5, 
@@ -67,7 +66,8 @@ ggplot(data = yearly_count, aes(x = Year, y = Count)) + # makign a column chart 
  invisible(summary(yearly_count))
 
 ```
-
+**Figure 1:** Number of juvenile hares caught during sampling from 1998-2012 at Bonanza LTE.
+  
 Above, Figure 1 shows the number of hares caught each year of the survey period. The number of hares caught vaired between 0 and 126. The minimum is `r min(yearly_count$Count)`, and the maximum is `r max(yearly_count$Count)`. The mean number of hares caught is `r mean(yearly_count$Count)`, and the median is `r median(yearly_count$Count)`. The graph shows that the number of hares caught peaked at the beginning of the study in 1999. After this peak the number decreased until the first year with no juvenile hare observations is recorded in 1998, with the second no-catch year being 2002. The last year without juvenile hare observations occured in 2009, with the last three years of the survey seeing counts below 25. Ensuring that both the number of traps, and days of of the year the traps (known as effort) are set are equal and consistent accross the survey's years can help reduce variance resulting from the studies methods. Variation in effort could result in fluxuations in the counts that are not representative of the data. 
 
 ### Juvenile Hare Weights
@@ -104,28 +104,31 @@ m_weight <- hare_weights %>% # making vector of just male weights
 ggplot(data = hare_weights, aes(x = full_sex, y = weight)) + #exploratory scatter plot graph
   geom_jitter(aes(color = full_sex)) +
   facet_wrap(~ site) + # adding site as a face wrap for comparison
-  labs(x = "Sex", y = "Weight (g)", caption = expression(paste(bold("Figure 2:"), "This plot shows the distribution of hare weights for each sex, faceted by survey site."))) +
     theme(axis.text.x = element_text(size = 7, hjust = 0.5), # aesthetic adjustments
         axis.text.y = element_text(size = 7),
         axis.title.x = element_text(hjust = 0.5, 
                                     vjust = 0.5),
-        plot.caption = element_text(hjust = 0.9))
+        plot.caption = element_text(hjust = 0.9))+
+  labs(color= "Sex") # changing legend title
 
+```
+**Figure 2:** This plot shows the distribution of hare weights for each sex, faceted by survey site.
+```{r}
 # histogram
 
 ggplot(data = hare_weights, aes(x = weight, fill = full_sex)) + # exploratory histogram of weights with sex stacked
   geom_histogram(bins = 18, color = "white") + # setting bins at smaller value than default 30
   facet_wrap(~site) + # separating based on site to compare
-  labs(x = "Weight (g)", y = "Percent of sample", caption = expression(paste(bold("Figure 3:"), "This histogram shows the distribution of hare weights by percent of population, and is faceted by site"))) + # adding labels
+  labs(x = "Weight (g)", y = "Percent of sample", color = "Sex") + # adding labels
   theme_light() +
   theme(axis.text.x = element_text(size = 7, hjust = 0.5), # aesthetic adjustments
         axis.text.y = element_text(size = 7),
         axis.title.x = element_text(hjust = 0.5, 
                                     vjust = 0.5),
         plot.caption = element_text(hjust = 0.9))
-
 ```
-
+**Figure 3:** This histogram shows the distribution of hare weights by percent of population, and is faceted by site. 
+  
 Figure 2 and Figure 3 above show the comparison between female and male juvenile showshoe hare weights first in a jitter plot and then in a side by side histograms. Samples taken where sex was not recorded are represented by 'NA'. In the jitter plot, the hares are separated by the site they were caught at, and it is clear that the least number of hares caught was at the Bonanza Black Spruce site, and the most at the Bonanza Riparian site. At the Ripairian site, the female observations are more concentrated, and the male observations are more spread out. This is shown further in the histogram, where the distribution of female weights adhere to a curve with a peak, and the male weights have a larger spread with less of a notable peak. The weights do not vary largely between the sexes, or between site location. On average at each of the site, female and male juvenile hares have similar weight distributions. 
 
 ### Juvenile Hare Weights Comparison
@@ -150,7 +153,7 @@ weight_cohen <- cohen.d(f_weight, m_weight) # effect size
 weight_cohen # viewing results 
 
 ```
-
+<center>**Table 2:** Summary Statistics for Female and Male Juvenile Hare Weights</center>
 ```{r}
 # Making summary table of statistics
 
@@ -169,7 +172,7 @@ summary_weights <- weights_full %>% # making summary chart
          "Count" = "sample_size",
          "Mean" = "mean")
 
-kable(summary_weights, caption = "Table 2: Summary Statistics for Female and Male Juvenile Hare Weights", digits = 2, align = "c") %>% 
+kable(summary_weights, digits = 2, align = "c") %>% 
   kable_styling(bootstrap_options = c("striped", "hover"), full_width = F)
 
 ```
@@ -248,7 +251,7 @@ With this linear regression, the R^2^ value of `r (lm_hare_glance$r.squared)` me
 
 Using a Pearson's R correlation, we see that there is a *moderatley strong* correlation between juvenile hare hind foot length and body weight (*r* = `r round(hare_cor$estimate,2)`, t(`r hare_cor$parameter`) = `r round(hare_cor$statistic,2)`, p < 0.001). 
 
-Assuming normality for these variable's relationship may be irresponsible since the exploratory data visualizations showed that the residuals do not have a typical normal distribution. The linear model describes the data well to a point, but having assumptions that are unbacked by the data can lead to irresponsible data representation and innacurate conclusions. Additionally, the sex of the juvenile hare may have an impact on this relationship, and that is a variable not addressed by this analysis. 
+Assuming normality for these variable's relationship may be irresponsible since the exploratory data visualizations showed that the residuals do not have a typical normal distribution. The linear model describes the data well to a point, but having assumptions that are unbacked by the data can lead to irresponsible data representation and innacurate conclusions. This linear model assumed hemoscedasticity, but the exploratory visualizations show that the data is heteroscedastic. Additionally, the sex of the juvenile hare may have an impact on this relationship, and that is a variable not addressed by this analysis. 
 
 ## Summary of Findings 
 - The most juvenile hares were caught in the second year of the study (1999)
