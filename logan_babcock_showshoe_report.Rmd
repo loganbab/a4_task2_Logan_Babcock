@@ -112,7 +112,7 @@ ggplot(data = hare_weights, aes(x = Sex, y = weight)) + #exploratory scatter plo
   labs(color= "Sex") # changing legend title
 
 ```
-**Figure 2:** This plot shows the distribution of hare weights for each sex, faceted by survey site.
+**Figure 2:** This plot shows the distribution of hare weights (g) for each sex, and categorized by survey site.
 
 ```{r}
 # histogram
@@ -127,7 +127,7 @@ ggplot(data = hare_weights, aes(x = weight, fill = Sex)) + # exploratory histogr
         axis.title.x = element_text(hjust = 0.5, 
                                     vjust = 0.5))
 ```
-**Figure 3:** This histogram shows the distribution of hare weights by percent of population, and is faceted by site. 
+**Figure 3:** This histogram shows the distribution of hare weights (g) by percent of population, and is categorized by survey site. 
   
 Figure 2 and Figure 3 above show the comparison between female and male juvenile showshoe hare weights first in a jitter plot and then in a side by side histograms. Samples taken where sex was not recorded are represented by 'NA'. In the jitter plot, the hares are separated by the site they were caught at, and it is clear that the least number of hares caught was at the Bonanza Black Spruce site, and the most at the Bonanza Riparian site. At the Ripairian site, the female observations are more concentrated, and the male observations are more spread out. This is shown further in the histogram, where the distribution of female weights adhere to a curve with a peak, and the male weights have a larger spread with less of a notable peak. The weights do not vary largely between the sexes, or between site location. On average at each of the site, female and male juvenile hares have similar weight distributions. 
 
@@ -210,7 +210,7 @@ ggplot(data = weight_foot, aes(x = hindft, y = weight)) + # making a graph with 
         plot.caption = element_text(hjust = 0.9))
   
 ```
-**Figure 4:** Hindfoot lenth (mm) and hare weight in grams are plotted to visualize their relationship.
+**Figure 4:** Hindfoot lenth (mm) and hare weight (g) are plotted to visualize their relationship.
 ```{r include = FALSE}
 # linear model, stored as lm_hare
 
